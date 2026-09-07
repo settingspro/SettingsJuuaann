@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Juuann | CSGO Player</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0C0E;
+  --bg-panel:#111417;
+  --bg-panel-hover:#171B1F;
+  --line:#242A2F;
+  --line-bright:#3A4148;
+  --text:#E8EAEC;
+  --text-dim:#7A8087;
+  --text-dim2:#565C61;
+  --accent:#FF6A1E;
+  --accent-2:#4FD1E0;
+  --accent-soft:rgba(255,106,30,.14);
+  --cut:14px;
+  --cut-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+  animation:pageIn .5s ease-out;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse 85% 60% at 50% 0%, #000 45%, transparent 90%);
+}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px 60px}
+
+/* ---- top bar ---- */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 28px;max-width:1180px;margin:0 auto;
+  border-bottom:1px solid var(--line);
+}
+.topbar .id{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 0 0 rgba(79,209,224,.5);animation:pulse 2.2s ease-out infinite}
+.id span{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-dim);letter-spacing:.3px}
+.wordmark{font-weight:700;font-size:1.05rem;color:var(--text)}
+nav{display:flex;gap:26px}
+nav a{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim);text-decoration:none;transition:color .2s}
+nav a:hover,nav a:focus-visible{color:var(--accent)}
+
+/* ---- hero ---- */
+.hero{padding:60px 0 46px}
+.hero .sub{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent-2);margin-bottom:6px}
+.hero h1{font-size:clamp(2.8rem,8vw,5rem);font-weight:700;letter-spacing:-.01em;line-height:1}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.chip{
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim);
+  border:1px solid var(--line-bright);padding:7px 14px;
+  clip-path:polygon(var(--cut-sm) 0,100% 0,100% calc(100% - var(--cut-sm)),calc(100% - var(--cut-sm)) 100%,0 100%,0 var(--cut-sm));
+}
+
+/* ---- sections ---- */
+.section{margin-top:56px}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:20px}
+.sec-head h2{font-size:1.4rem;font-weight:600;white-space:nowrap}
+.sec-head .rule{flex:1;height:1px;background:linear-gradient(to right,var(--line-bright),transparent)}
+.sec-head .count{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-dim2)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* ---- base panel (tactical clipped-corner) ---- */
+.panel{
+  position:relative;
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
+  padding:20px 22px;
+  overflow:hidden;
+  transition:background .2s ease, border-color .2s ease;
+}
+.panel .label{font-size:.85rem;color:var(--text-dim);font-weight:600;margin-bottom:10px}
+.panel .value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--text);transition:color .2s ease}
+
+/* static (non-copyable) panels: quiet hover */
+.panel.static:hover{border-color:var(--line-bright)}
+
+/* copyable panels: the "selectable squares" get the full treatment */
+.panel.copyable{cursor:pointer}
+.panel.copyable::before{
+  content:"";position:absolute;top:0;left:0;height:2px;width:0;
+  background:var(--accent);transition:width .28s ease;
+}
+.panel.copyable::after{
+  content:"";position:absolute;left:-20%;top:-60%;width:140%;height:60%;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,106,30,.16) 50%,transparent 60%);
+  transform:translateY(-40%);opacity:0;transition:opacity .2s ease;
+  pointer-events:none;
+}
+.panel.copyable:hover{
+  background:var(--bg-panel-hover);
+  border-color:var(--accent);
+  box-shadow:0 0 26px -8px rgba(255,106,30,.4);
+}
+.panel.copyable:hover::before{width:100%}
+.panel.copyable:hover::after{opacity:1;animation:sweep .9s ease forwards}
+.panel.copyable:hover .value{color:var(--accent)}
+.panel.copyable.flash{animation:flashPulse .55s ease-out}
+
+.panel .xh-code{font-family:'JetBrains Mono',monospace;font-size:.92rem;word-break:break-all;color:var(--text)}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;margin-top:16px;
+  background:transparent;color:var(--text-dim);
+  border:1px solid var(--line-bright);
+  font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:500;
+  padding:8px 14px;cursor:pointer;
+  clip-path:polygon(var(--cut-sm) 0,100% 0,100% calc(100% - var(--cut-sm)),calc(100% - var(--cut-sm)) 100%,0 100%,0 var(--cut-sm));
+  transition:border-color .2s ease, color .2s ease;
+}
+.btn:hover,.btn:focus-visible{border-color:var(--accent);color:var(--accent)}
+.btn.copied{border-color:var(--accent-2);color:var(--accent-2)}
+
+/* ---- steam ---- */
+.steam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.steam-card{
+  display:block;text-decoration:none;color:inherit;
+  background:var(--bg-panel);border:1px solid var(--line);
+  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
+  padding:20px 22px;position:relative;transition:background .2s ease,border-color .2s ease;
+}
+.steam-card .label{font-size:.85rem;color:var(--text-dim);font-weight:600;margin-bottom:6px}
+.steam-card .handle{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+.steam-card .chev{opacity:0;transform:translateX(-4px);transition:.2s ease;color:var(--accent-2)}
+.steam-card:hover{border-color:var(--accent-2);background:var(--bg-panel-hover)}
+.steam-card:hover .chev{opacity:1;transform:translateX(0)}
+
+/* ---- terminal / cfg ---- */
+.terminal{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#0D0F11}
+.terminal-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#15181B;border-bottom:1px solid var(--line)}
+.terminal-bar .dots{display:flex;gap:6px}
+.terminal-bar .dots span{width:9px;height:9px;border-radius:50%;background:#2E3338}
+.terminal-bar .fname{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim)}
+pre{
+  padding:22px;overflow:auto;max-height:380px;margin:0;
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.6;color:var(--text);
+}
+.cf-cm{color:var(--text-dim2)}
+.cf-head{color:var(--accent);font-weight:600}
+.cf-rule{color:var(--line-bright)}
+.cf-val{color:var(--accent-2)}
+
+footer{text-align:center;color:var(--text-dim2);font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:60px 0 30px}
+
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,209,224,.45)}100%{box-shadow:0 0 0 8px rgba(79,209,224,0)}}
+@keyframes sweep{from{transform:translateY(-40%)}to{transform:translateY(140%)}}
+@keyframes flashPulse{0%{background-color:var(--accent-soft)}100%{background-color:var(--bg-panel-hover)}}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
+
+@media (max-width:640px){
+  .topbar{padding:18px 20px;flex-wrap:wrap;gap:12px}
+  nav{gap:16px}
+  .wrap{padding:0 20px 60px}
+  .hero{padding:40px 0 34px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="id">
+    <span class="dot"></span>
+    <span class="wordmark">Juuann</span>
+    <span>· CSGO Legacy</span>
+  </div>
+  <nav>
+    <a href="#configuracion">Config</a>
+    <a href="#setup">Setup</a>
+    <a href="#steam">Steam</a>
+    <a href="#autoexec">Cfg</a>
+  </nav>
+</div>
+
+<div class="wrap">
+
+<section class="hero">
+  <div class="sub">CS:GO Player</div>
+  <h1>Juuann</h1>
+  <div class="chips">
+    <div class="chip">25K Premier Peak</div>
+    <div class="chip">8000+ Hours</div>
+    <div class="chip">Since 2018</div>
+  </div>
+</section>
+
+<section class="section" id="configuracion">
+  <div class="sec-head"><h2>Configuración</h2><div class="rule"></div><span class="count">4</span></div>
+  <div class="grid">
+    <div class="panel copyable">
+      <div class="label">Resolution</div>
+      <div class="value">800x600</div>
+      <button class="btn" onclick="c('800x600', this)">Copiar</button>
+    </div>
+    <div class="panel copyable">
+      <div class="label">DPI</div>
+      <div class="value">800</div>
+      <button class="btn" onclick="c('800', this)">Copiar</button>
+    </div>
+    <div class="panel copyable">
+      <div class="label">Sensitivity</div>
+      <div class="value">1.55</div>
+      <button class="btn" onclick="c('1.55', this)">Copiar</button>
+    </div>
+    <div class="panel copyable">
+      <div class="label">Crosshair</div>
+      <div class="xh-code">CSGO-ue57B-RNCCw-8URMu-dHkb6-5pZQM</div>
+      <button class="btn" onclick="c('CSGO-ue57B-RNCCw-8URMu-dHkb6-5pZQM', this)">Copiar</button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="hardware">
+  <div class="sec-head"><h2>Hardware</h2><div class="rule"></div><span class="count">4</span></div>
+  <div class="grid">
+    <div class="panel static"><div class="label">CPU</div><div class="value">i3-7100</div></div>
+    <div class="panel static"><div class="label">GPU</div><div class="value">GT 1030 GDDR5</div></div>
+    <div class="panel static"><div class="label">RAM</div><div class="value">16 GB</div></div>
+    <div class="panel static"><div class="label">SSD</div><div class="value">Kingston 1TB</div></div>
+  </div>
+</section>
+
+<section class="section" id="setup">
+  <div class="sec-head"><h2>Setup</h2><div class="rule"></div><span class="count">3</span></div>
+  <div class="grid">
+    <div class="panel static"><div class="label">Mouse</div><div class="value">Redragon King Pro</div></div>
+    <div class="panel static"><div class="label">Keyboard</div><div class="value">T-Dagger Arena</div></div>
+    <div class="panel static"><div class="label">Monitor</div><div class="value">VX2428A</div><div class="xh-code" style="margin-top:6px;color:var(--text-dim)">180Hz IPS</div></div>
+  </div>
+</section>
+
+<section class="section" id="steam">
+  <div class="sec-head"><h2>Cuentas de Steam</h2><div class="rule"></div><span class="count">2</span></div>
+  <div class="steam-grid">
+    <a class="steam-card" href="https://steamcommunity.com/id/facu1234567/" target="_blank" rel="noopener">
+      <div class="label">Main Account</div>
+      <div class="handle"><span>facu1234567</span><span class="chev">›</span></div>
+    </a>
+    <a class="steam-card" href="https://steamcommunity.com/profiles/76561199816492394/" target="_blank" rel="noopener">
+      <div class="label">Secondary Account</div>
+      <div class="handle"><span>76561199816492394</span><span class="chev">›</span></div>
+    </a>
+  </div>
+</section>
+
+<section class="section" id="autoexec">
+  <div class="sec-head"><h2>Autoexec.cfg</h2><div class="rule"></div></div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="fname">autoexec.cfg</div>
+      <button class="btn" onclick="d()">Descargar .cfg</button>
+    </div>
+    <pre id="cfgText">// ====================================================================
+// CONFIGURACIÓN MAESTRA OPTIMIZADA v2 - CS:GO LEGACY 2023
+// Diseñada para: Intel i3-7100 (2C/4T) + NVIDIA GT 1030 + 16GB RAM
+// ENFOQUE: MÁXIMOS FPS POSIBLES, ESTABILIDAD EXTREMA Y CERO LAG (SIN GRABAR)
+// ====================================================================
+
+// -------------------------------------------------------------
+// 1. RENDIMIENTO MULTI-HILO Y PROCESADOR (CPU Intel i3-7100)
+// -------------------------------------------------------------
+mat_queue_mode "2"           // Fuerza el renderizado multinúcleo. Esencial para exprimir los 4 hilos del i3-7100.
+mat_queue_priority "1"       // Prioridad de hilos en el thread pool (1 = óptimo rendimiento multinúcleo).
+cl_threaded_bone_setup "1"   // Procesa animaciones de modelos en hilos paralelos para ganar FPS en combates.
+r_threaded_particles "1"     // Procesa los efectos de partículas en hilos secundarios.
+r_threaded_renderables "1"   // Distribuye el renderizado de objetos en múltiples hilos.
+
+// -------------------------------------------------------------
+// 2. OPTIMIZACIÓN DE AUDIO PARA REDUCIR CUELLO DE BOTELLA DEL CPU
+// -------------------------------------------------------------
+dsp_slow_cpu "1"             // Reduce ligeramente la calidad de efectos de audio espaciales para liberar CPU para los FPS.
+snd_mixahead "0.05"          // Búfer de audio al mínimo para eliminar el retraso (input lag de sonido) sin sobrecargar el procesador.
+snd_mix_async "1"            // Procesa el sonido de forma asíncrona para eliminar tirones (micro-stutters) por colisión de audio.
+snd_stream "1"               // Carga el audio dinámicamente desde el disco. Libera RAM y CPU.
+
+// -------------------------------------------------------------
+// 3. RENDIMIENTO GRÁFICO ULTRA-AGRESIVO (NVIDIA GT 1030)
+// -------------------------------------------------------------
+r_dynamic "0"                // Desactiva la iluminación dinámica (como fogonazos de granadas o disparos), evitando caídas brutales de FPS.
+muzzleflash_light "0"        // Desactiva el reflejo de luz de los disparos en las paredes.
+r_drawtracers_firstperson "0"// Quita tus trazadoras de balas en primera persona para maximizar FPS y mejorar recoil control.
+r_drawtracers "0"            // Quita las balas trazadoras de todos en el mapa, ahorrando enorme procesamiento gráfico.
+r_drawflecks "0"             // Desactiva el impacto de chispas y partículas físicas pesadas al golpear superficies.
+func_break_max_pieces "0"    // Elimina escombros molestos (vidrios, madera rota). Menos físicas = FPS más consistentes.
+props_break_max_pieces "0"   // Elimina la fragmentación de objetos decorativos destruibles.
+cl_disable_ragdolls "1"      // Desactiva físicas pesadas en los cuerpos al morir. Estabiliza el frametime en bajas múltiples.
+mat_disable_bloom "1"        // Desactiva el efecto bloom (brillo excesivo). Mayor rendimiento para tu GT 1030.
+mat_hdr_level "0"            // Desactiva el alto rango dinámico (HDR), ganando un gran margen de FPS.
+mat_reducefillrate "1"       // Reduce la tasa de relleno de renderizado. Enorme impulso en gráficas de gama baja.
+r_cheapwaterstart "1"        // Comienza la simplificación visual del agua a muy corta distancia.
+r_cheapwaterend "1"          // Simplifica el agua al máximo en la distancia.
+
+// -------------------------------------------------------------
+// 4. MODELOS DE PERSONAJES Y VEGETACIÓN (GPU FILLRATE OPTIMIZATION)
+// -------------------------------------------------------------
+r_eyegloss "0"               // Quita brillo estético e innecesario en los ojos de los modelos.
+r_eyemove "0"                // Desactiva la animación del movimiento de ojos en los personajes.
+r_eyeshift_x "0"
+r_eyeshift_y "0"
+r_eyeshift_z "0"
+r_eyesize "0"                // Desactiva por completo el detalle ocular en modelos.
+cl_detail_max_sway "0"       // Desactiva el balanceo estético de pasto, arbustos y hojarasca.
+cl_detaildist "0"            // Reduce a cero la distancia para dibujar detalles del suelo (pasto, basura estática).
+cl_detailfade "0"            // Desactiva el desvanecimiento progresivo de vegetación.
+
+// -------------------------------------------------------------
+// 5. MAXIMIZACIÓN Y ESTABILIDAD DE FPS (SIN LÍMITES)
+// -------------------------------------------------------------
+fps_max "0"                  // Deslimita los FPS al máximo (0 = sin límite) para obtener la menor latencia de entrada posible.
+fps_max_menu "300"           // FPS altos en el menú para una transición instantánea y fluida al cargar pantallas.
+cl_forcepreload "0"          // ¡RECOMENDADO EN 0! Forzar la precarga (1) causa micro-stuttering por lag de hilos en motores Source actualizados.
+
+// -------------------------------------------------------------
+// 6. LIMPIEZA DE INTERFAZ Y PROCESOS OCULTOS
+// -------------------------------------------------------------
+cl_autohelp "0"              // Desactiva la ayuda emergente en pantalla.
+cl_showhelp "0"              // Desactiva recordatorios de ayuda.
+cl_disablehtmlmotd "1"       // Bloquea los anuncios HTML pesados al entrar a servidores comunitarios.
+cl_downloadfilter "nosounds" // Evita la descarga de sonidos pesados de servidores comunitarios (menos tirones de disco).
+
+// -------------------------------------------------------------
+// 7. RED Y REGISTRO DE BALAS (128 Tickrate de Competición)
+// -------------------------------------------------------------
+rate "786432"                // Máxima tasa de bits de red soportada por CS:GO.
+cl_cmdrate "128"             // Actualizaciones de ticks enviadas al servidor por segundo.
+cl_updaterate "128"          // Actualizaciones de ticks recibidas desde el servidor por segundo.
+cl_interp "0"                // Configura automáticamente la interpolación de red al mínimo posible del servidor.
+cl_interp_ratio "1"          // Ajuste óptimo para baja latencia (cambiar a \"2\" si tu ping estable supera los 60ms).
+cl_interpolate "1"           // Mantiene el movimiento de los enemigos suave en pantalla para evitar teleporting visual.
+cl_predict "1"               // Predicción de movimiento del jugador del lado del cliente.
+cl_predictweapons "1"        // Predicción visual de armas del lado del cliente.
+cl_lagcompensation "1"       // Compensación de lag nativa para un registro de disparos perfecto.
+
+// -------------------------------------------------------------
+// 8. TUS BINDS PERSONALES (Mantenidos exactamente como los tenías)
+// -------------------------------------------------------------
+m_rawinput "1"               // Entrada directa del mouse.
+bind "mouse1" "+attack"
+bind "3" "slot3; clear; r_cleardecals" // Tu bind maestro de cuchillo para limpiar rastros de sangre/balas y restaurar FPS.
+bind "h" "toggle cl_righthand"
+bind "MOUSE3" "toggle voice_enable 0 1"
+bind "j" "+left"
+bind "K" "say Too predictable."
+bind "l" "r_cleardecals"     // Tecla extra para limpiar decals manualmente.
+
+// -------------------------------------------------------------
+// 9. TU VIEWMODEL Y BOBBING (Mantenidos intactos)
+// -------------------------------------------------------------
+viewmodel_fov "68"
+viewmodel_offset_x "2.5"
+viewmodel_offset_y "2"
+viewmodel_offset_z "-2"
+viewmodel_presetpos "0"
+cl_viewmodel_shift_left_amt "1.5"
+cl_viewmodel_shift_right_amt "0.75"
+cl_bob_lower_amt "5"
+cl_bobamt_lat "0.1"
+cl_bobamt_vert "0.1"
+cl_bobcycle "0.98"
+
+// -------------------------------------------------------------
+// 10. TELEMETRÍA Y COMENTARIOS DE CONFIRMACIÓN
+// -------------------------------------------------------------
+net_graph "1"
+net_graphpos "1"
+net_graphproportionalfont "0" // Fuente compacta y optimizada para no obstruir tu pantalla de juego.
+
+host_writeconfig             // Asegura que todas las opciones queden grabadas en tu config.cfg.
+
+clear
+echo "========================================================="
+echo "  CS:GO LEGACY 2023 - AUTOEXEC OPTIMIZADO v2 (MAX FPS)   "
+echo "  SIN LIMITACIONES DE GRABACIÓN - ENFOQUE EXTREMO FPS    "
+echo "  TU CONFIGURACIÓN PERSONAL HA SIDO RESPETADA AL 100%    "
+echo "========================================================="</pre>
+  </div>
+</section>
+
+</div>
+
+<footer>Juuann · CSGO Player</footer>
+
+<script>
+function c(t, btn){
+  navigator.clipboard.writeText(t);
+  const panel = btn.closest('.panel');
+  if(panel){
+    panel.classList.add('flash');
+    setTimeout(()=>panel.classList.remove('flash'), 550);
+  }
+  const original = btn.textContent;
+  btn.textContent = 'Copiado ✓';
+  btn.classList.add('copied');
+  setTimeout(()=>{
+    btn.textContent = original;
+    btn.classList.remove('copied');
+  }, 1200);
+}
+
+function d(){
+  const b = new Blob([document.getElementById('cfgText').innerText], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'autoexec-optimizado-v2.cfg';
+  a.click();
+}
+
+(function highlightCfg(){
+  const el = document.getElementById('cfgText');
+  const lines = el.textContent.split('\n');
+  const html = lines.map(line=>{
+    let esc = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const trimmed = esc.trim();
+    if(/^\/\/\s*-{5,}/.test(trimmed)) return '<span class="cf-rule">'+esc+'</span>';
+    if(/^\/\/\s*\d+\./.test(trimmed)) return '<span class="cf-head">'+esc+'</span>';
+    const idx = esc.indexOf('//');
+    let code = idx >= 0 ? esc.slice(0, idx) : esc;
+    let cmt = idx >= 0 ? esc.slice(idx) : '';
+    code = code.replace(/"([^"]*)"/g, '<span class="cf-val">"$1"</span>');
+    return code + (cmt ? '<span class="cf-cm">'+cmt+'</span>' : '');
+  }).join('\n');
+  el.innerHTML = html;
+})();
+</script>
+
+</body>
+</html>
