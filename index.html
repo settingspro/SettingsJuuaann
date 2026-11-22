@@ -327,8 +327,6 @@ echo "========================================================="</pre>
 
 <footer>Juuann · CSGO Player</footer>
 
-<button class="btn" id="cc" onclick="cc(this)" style="position:fixed;right:18px;bottom:18px;z-index:800;margin:0;background:#000c;backdrop-filter:blur(8px)">&lt;/&gt; Copiar código</button>
-
 <div id="pl" class="paused">
   <div class="eq"><i></i><i></i><i></i><i></i></div>
   <span>GPU RX460 SHAPPIRE</span>
@@ -386,18 +384,6 @@ function loop(){
   for(const p of P){const d=Math.hypot(p.x-M.x,p.y-M.y);if(d<200){g.strokeStyle=`rgba(124,58,237,${(1-d/200)*.8})`;g.lineWidth=1;g.beginPath();g.moveTo(p.x,p.y);g.lineTo(M.x,M.y);g.stroke()}}
   click=0;requestAnimationFrame(loop)}
 loop();
-
-/* copiar código fuente */
-async function cc(b){
-  const o=b.innerHTML;
-  try{
-    const r=await fetch(location.href.split('#')[0],{cache:'no-store'});
-    if(!r.ok)throw 0;
-    await navigator.clipboard.writeText(await r.text());
-    b.textContent='Código copiado ✓';b.classList.add('copied');
-  }catch(e){b.textContent='Subila a un servidor';}
-  setTimeout(()=>{b.innerHTML=o;b.classList.remove('copied')},1800);
-}
 
 /* música */
 const pl=document.getElementById('pl'),pp=document.getElementById('pp'),vol=document.getElementById('vol');let yt,au,on=false;
