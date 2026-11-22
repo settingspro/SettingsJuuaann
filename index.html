@@ -7,277 +7,200 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0A0C0E;
-  --bg-panel:#111417;
-  --bg-panel-hover:#171B1F;
-  --line:#242A2F;
-  --line-bright:#3A4148;
-  --text:#E8EAEC;
-  --text-dim:#7A8087;
-  --text-dim2:#565C61;
-  --accent:#FF6A1E;
-  --accent-2:#4FD1E0;
-  --accent-soft:rgba(255,106,30,.14);
-  --cut:14px;
-  --cut-sm:8px;
-}
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+:root{--bg:#050507;--panel:#0b0b0f;--line:#1c1c22;--text:#f4f4f6;--dim:#85858f;--v:#7c3aed;--v2:#4c1d95;--vg:rgba(124,58,237,.5);--cut:14px;--cut-sm:8px}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Rajdhani',sans-serif;
-  min-height:100vh;
-  position:relative;
-  overflow-x:hidden;
-  animation:pageIn .5s ease-out;
-}
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,.025) 1px, transparent 1px);
-  background-size:46px 46px;
-  mask-image:radial-gradient(ellipse 85% 60% at 50% 0%, #000 45%, transparent 90%);
-}
-.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px 60px}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;cursor:none}
+@media (hover:none){body{cursor:auto}.cur,.cur2{display:none}}
+a,button{cursor:none}
+#bg{position:fixed;inset:0;z-index:0}
+body::before{content:"";position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+body::after{content:"";position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,#000 130%)}
+.cur,.cur2{position:fixed;top:0;left:0;z-index:999;pointer-events:none;border-radius:50%}
+.cur{width:8px;height:8px;background:#fff;margin:-4px 0 0 -4px}
+.cur2{width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid var(--v);transition:width .2s,height .2s,margin .2s,background .2s}
+.cur2.h{width:64px;height:64px;margin:-32px 0 0 -32px;background:rgba(124,58,237,.18)}
 
-/* ---- top bar ---- */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:22px 28px;max-width:1180px;margin:0 auto;
-  border-bottom:1px solid var(--line);
-}
-.topbar .id{display:flex;align-items:center;gap:10px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 0 0 rgba(79,209,224,.5);animation:pulse 2.2s ease-out infinite}
-.id span{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-dim);letter-spacing:.3px}
-.wordmark{font-weight:700;font-size:1.05rem;color:var(--text)}
+/* enter */
+#enter{position:fixed;inset:0;z-index:900;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .8s,transform .8s}
+#enter.out{opacity:0;transform:scale(1.15);pointer-events:none}
+#enter h1{font-size:clamp(3.5rem,16vw,10rem)}
+#enter p{font-family:'JetBrains Mono',monospace;letter-spacing:.4em;font-size:.85rem;color:#fff;animation:blink 1.1s steps(2) infinite}
+#enter small{font-family:'JetBrains Mono',monospace;color:var(--dim);font-size:.7rem}
+@keyframes blink{50%{opacity:.15}}
+
+/* glitch */
+.glitch{position:relative;font-weight:700;line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:#fff}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;overflow:hidden}
+.glitch::before{color:var(--v);transform:translate(-3px,0);animation:g1 2.4s infinite steps(1)}
+.glitch::after{color:#bbb;transform:translate(3px,0);mix-blend-mode:difference;animation:g2 2.4s infinite steps(1)}
+@keyframes g1{0%,90%{clip-path:inset(0 0 100% 0)}92%{clip-path:inset(20% 0 55% 0)}94%{clip-path:inset(60% 0 10% 0)}96%{clip-path:inset(5% 0 80% 0)}98%{clip-path:inset(0 0 100% 0)}}
+@keyframes g2{0%,88%{clip-path:inset(0 0 100% 0)}90%{clip-path:inset(70% 0 5% 0)}93%{clip-path:inset(30% 0 40% 0)}97%{clip-path:inset(85% 0 0 0)}99%{clip-path:inset(0 0 100% 0)}}
+
+/* top */
+.topbar{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:22px 28px;max-width:1180px;margin:0 auto;border-bottom:1px solid var(--line)}
+.id{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--dim)}
+.id b{font-family:'Rajdhani';font-size:1.15rem;color:#fff;letter-spacing:.08em}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--v);animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--vg)}100%{box-shadow:0 0 0 12px transparent}}
 nav{display:flex;gap:26px}
-nav a{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim);text-decoration:none;transition:color .2s}
-nav a:hover,nav a:focus-visible{color:var(--accent)}
+nav a{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--dim);text-decoration:none;text-transform:uppercase;position:relative;transition:color .2s}
+nav a::after{content:"";position:absolute;left:0;bottom:-4px;height:1px;width:0;background:var(--v);transition:width .25s}
+nav a:hover{color:#fff}nav a:hover::after{width:100%}
 
-/* ---- hero ---- */
-.hero{padding:60px 0 46px}
-.hero .sub{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent-2);margin-bottom:6px}
-.hero h1{font-size:clamp(2.8rem,8vw,5rem);font-weight:700;letter-spacing:-.01em;line-height:1}
-.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
-.chip{
-  font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim);
-  border:1px solid var(--line-bright);padding:7px 14px;
-  clip-path:polygon(var(--cut-sm) 0,100% 0,100% calc(100% - var(--cut-sm)),calc(100% - var(--cut-sm)) 100%,0 100%,0 var(--cut-sm));
-}
+.wrap{position:relative;z-index:3;max-width:1180px;margin:0 auto;padding:0 28px 60px}
+.hero{padding:70px 0 40px}
+.hero .sub{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--v);margin-bottom:10px;letter-spacing:.3em}
+.hero h1{font-size:clamp(4rem,15vw,10rem)}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#fff;background:#fff1;border:1px solid #fff3;padding:8px 16px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:.25s}
+.chip:hover{background:var(--v);border-color:var(--v);transform:translateY(-3px) skew(-6deg)}
 
-/* ---- sections ---- */
-.section{margin-top:56px}
-.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:20px}
-.sec-head h2{font-size:1.4rem;font-weight:600;white-space:nowrap}
-.sec-head .rule{flex:1;height:1px;background:linear-gradient(to right,var(--line-bright),transparent)}
-.sec-head .count{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-dim2)}
+.ticker{position:relative;z-index:3;overflow:hidden;border-block:1px solid var(--line);background:#fff;color:#000;margin:20px 0}
+.ticker div{display:flex;width:max-content;animation:tk 22s linear infinite;font-weight:700;font-size:1.05rem;letter-spacing:.2em;padding:8px 0;text-transform:uppercase}
+.ticker span{padding:0 28px}.ticker span::after{content:"✦";margin-left:56px;color:var(--v)}
+@keyframes tk{to{transform:translateX(-50%)}}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.section{margin-top:60px}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
+.sec-head h2{font-size:1.9rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.sec-head h2::before{content:"//";color:var(--v);margin-right:10px}
+.rule{flex:1;height:1px;background:linear-gradient(to right,var(--v),transparent)}
+.count{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;perspective:1000px}
 
-/* ---- base panel (tactical clipped-corner) ---- */
-.panel{
-  position:relative;
-  background:var(--bg-panel);
-  border:1px solid var(--line);
-  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
-  padding:20px 22px;
-  overflow:hidden;
-  transition:background .2s ease, border-color .2s ease;
-}
-.panel .label{font-size:.85rem;color:var(--text-dim);font-weight:600;margin-bottom:10px}
-.panel .value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--text);transition:color .2s ease}
+/* cards */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s}
+.reveal.on{opacity:1;transform:none}
+.panel{--mx:50%;--my:50%;position:relative;padding:1px;background:var(--line);clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));transition:transform .15s ease-out,background .3s;will-change:transform}
+.panel::before{content:"";position:absolute;inset:-60%;background:conic-gradient(from var(--a),transparent 0 60%,var(--v) 80%,#fff 90%,transparent);opacity:0;transition:opacity .3s;animation:spin 3s linear infinite}
+@keyframes spin{to{--a:360deg}}
+.panel:hover::before{opacity:1}
+.panel .in{position:relative;height:100%;padding:22px 24px;background:var(--panel);clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));overflow:hidden}
+.panel .in::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx) var(--my),rgba(124,58,237,.38),transparent 70%);opacity:0;transition:opacity .3s}
+.panel:hover .in::before{opacity:1}
+.panel .in::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-20deg)}
+.panel:hover .in::after{animation:shine .8s}
+@keyframes shine{to{left:160%}}
+.in>*{position:relative}
+.label{font-size:.9rem;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.15em;margin-bottom:10px}
+.value{font-family:'JetBrains Mono',monospace;font-size:1.45rem;font-weight:600;transition:.25s}
+.panel:hover .value{text-shadow:0 0 18px var(--v);letter-spacing:.02em}
+.sm{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--dim);margin-top:6px}
+.panel.copyable{cursor:none}
+.panel.flash{animation:fl .5s}
+@keyframes fl{0%{filter:brightness(2.2)}100%{filter:none}}
 
-/* static (non-copyable) panels: quiet hover */
-.panel.static:hover{border-color:var(--line-bright)}
+.btn{display:inline-flex;margin-top:16px;background:transparent;color:#fff;border:1px solid #fff4;font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:8px 16px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:.2s;text-transform:uppercase}
+.btn:hover{background:#fff;color:#000}
+.btn.copied{background:var(--v);border-color:var(--v)}
 
-/* copyable panels: the "selectable squares" get the full treatment */
-.panel.copyable{cursor:pointer}
-.panel.copyable::before{
-  content:"";position:absolute;top:0;left:0;height:2px;width:0;
-  background:var(--accent);transition:width .28s ease;
-}
-.panel.copyable::after{
-  content:"";position:absolute;left:-20%;top:-60%;width:140%;height:60%;
-  background:linear-gradient(115deg,transparent 40%,rgba(255,106,30,.16) 50%,transparent 60%);
-  transform:translateY(-40%);opacity:0;transition:opacity .2s ease;
-  pointer-events:none;
-}
-.panel.copyable:hover{
-  background:var(--bg-panel-hover);
-  border-color:var(--accent);
-  box-shadow:0 0 26px -8px rgba(255,106,30,.4);
-}
-.panel.copyable:hover::before{width:100%}
-.panel.copyable:hover::after{opacity:1;animation:sweep .9s ease forwards}
-.panel.copyable:hover .value{color:var(--accent)}
-.panel.copyable.flash{animation:flashPulse .55s ease-out}
+.steam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;perspective:1000px}
+.steam-grid a{display:block;color:inherit;text-decoration:none}
+.handle{font-family:'JetBrains Mono',monospace;display:flex;justify-content:space-between;font-size:1rem}
+.chev{color:var(--v);transition:.25s}.panel:hover .chev{transform:translateX(8px);color:#fff}
 
-.panel .xh-code{font-family:'JetBrains Mono',monospace;font-size:.92rem;word-break:break-all;color:var(--text)}
+.terminal{border:1px solid var(--line);background:#07070a;box-shadow:0 0 60px -20px var(--vg)}
+.terminal-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#101015;border-bottom:1px solid var(--v2)}
+.dots{display:flex;gap:6px}.dots span{width:9px;height:9px;border-radius:50%;background:#333}.dots span:first-child{background:var(--v)}
+.fname{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--dim)}
+.terminal .btn{margin:0;padding:6px 12px}
+pre{padding:22px;overflow:auto;max-height:380px;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.6;color:#ddd;cursor:auto}
+.cf-cm{color:#555}.cf-head{color:var(--v);font-weight:600}.cf-rule{color:#2a2a33}.cf-val{color:#fff;text-shadow:0 0 8px var(--vg)}
+footer{position:relative;z-index:3;text-align:center;color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:50px 0 90px}
 
-.btn{
-  display:inline-flex;align-items:center;gap:6px;margin-top:16px;
-  background:transparent;color:var(--text-dim);
-  border:1px solid var(--line-bright);
-  font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:500;
-  padding:8px 14px;cursor:pointer;
-  clip-path:polygon(var(--cut-sm) 0,100% 0,100% calc(100% - var(--cut-sm)),calc(100% - var(--cut-sm)) 100%,0 100%,0 var(--cut-sm));
-  transition:border-color .2s ease, color .2s ease;
-}
-.btn:hover,.btn:focus-visible{border-color:var(--accent);color:var(--accent)}
-.btn.copied{border-color:var(--accent-2);color:var(--accent-2)}
+/* player */
+#pl{position:fixed;left:18px;bottom:18px;z-index:800;display:flex;align-items:center;gap:12px;padding:10px 14px;background:#000c;border:1px solid var(--v2);backdrop-filter:blur(8px);font-family:'JetBrains Mono',monospace;font-size:.7rem;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#pl button{background:none;border:1px solid #fff4;color:#fff;width:30px;height:30px;font-size:.8rem}
+#pl button:hover{background:var(--v);border-color:var(--v)}
+#pl input{width:80px;accent-color:var(--v);cursor:none}
+.eq{display:flex;gap:2px;align-items:flex-end;height:18px}
+.eq i{width:3px;background:var(--v);height:30%;animation:eq .7s ease-in-out infinite alternate}
+.eq i:nth-child(2){animation-delay:.15s}.eq i:nth-child(3){animation-delay:.3s}.eq i:nth-child(4){animation-delay:.05s}
+.paused .eq i{animation-play-state:paused;height:15%}
+@keyframes eq{to{height:100%}}
+#yt{position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px}
 
-/* ---- steam ---- */
-.steam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.steam-card{
-  display:block;text-decoration:none;color:inherit;
-  background:var(--bg-panel);border:1px solid var(--line);
-  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
-  padding:20px 22px;position:relative;transition:background .2s ease,border-color .2s ease;
-}
-.steam-card .label{font-size:.85rem;color:var(--text-dim);font-weight:600;margin-bottom:6px}
-.steam-card .handle{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--text);display:flex;align-items:center;justify-content:space-between}
-.steam-card .chev{opacity:0;transform:translateX(-4px);transition:.2s ease;color:var(--accent-2)}
-.steam-card:hover{border-color:var(--accent-2);background:var(--bg-panel-hover)}
-.steam-card:hover .chev{opacity:1;transform:translateX(0)}
-
-/* ---- terminal / cfg ---- */
-.terminal{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#0D0F11}
-.terminal-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#15181B;border-bottom:1px solid var(--line)}
-.terminal-bar .dots{display:flex;gap:6px}
-.terminal-bar .dots span{width:9px;height:9px;border-radius:50%;background:#2E3338}
-.terminal-bar .fname{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim)}
-pre{
-  padding:22px;overflow:auto;max-height:380px;margin:0;
-  font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.6;color:var(--text);
-}
-.cf-cm{color:var(--text-dim2)}
-.cf-head{color:var(--accent);font-weight:600}
-.cf-rule{color:var(--line-bright)}
-.cf-val{color:var(--accent-2)}
-
-footer{text-align:center;color:var(--text-dim2);font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:60px 0 30px}
-
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,209,224,.45)}100%{box-shadow:0 0 0 8px rgba(79,209,224,0)}}
-@keyframes sweep{from{transform:translateY(-40%)}to{transform:translateY(140%)}}
-@keyframes flashPulse{0%{background-color:var(--accent-soft)}100%{background-color:var(--bg-panel-hover)}}
-@keyframes pageIn{from{opacity:0}to{opacity:1}}
-
-@media (max-width:640px){
-  .topbar{padding:18px 20px;flex-wrap:wrap;gap:12px}
-  nav{gap:16px}
-  .wrap{padding:0 20px 60px}
-  .hero{padding:40px 0 34px}
-}
-@media (prefers-reduced-motion:reduce){
-  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
-}
+@media (max-width:640px){.topbar{flex-wrap:wrap;gap:12px;padding:18px 20px}nav{gap:14px}.wrap{padding:0 20px 60px}#pl span{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
+<canvas id="bg"></canvas>
+<div class="cur"></div><div class="cur2"></div>
+
+<div id="enter">
+  <h1 class="glitch" data-t="JUUANN">JUUANN</h1>
+  <p>[ CLICK PARA ENTRAR ]</p>
+  <small>🔊 con sonido</small>
+</div>
+<div id="yt"></div>
 
 <div class="topbar">
-  <div class="id">
-    <span class="dot"></span>
-    <span class="wordmark">Juuann</span>
-    <span>· CSGO Legacy</span>
-  </div>
-  <nav>
-    <a href="#configuracion">Config</a>
-    <a href="#setup">Setup</a>
-    <a href="#steam">Steam</a>
-    <a href="#autoexec">Cfg</a>
-  </nav>
+  <div class="id"><span class="dot"></span><b>JUUANN</b><span>· CSGO LEGACY</span></div>
+  <nav><a href="#configuracion">Config</a><a href="#hardware">Hardware</a><a href="#setup">Setup</a><a href="#steam">Steam</a><a href="#autoexec">Cfg</a></nav>
 </div>
 
 <div class="wrap">
-
 <section class="hero">
-  <div class="sub">CS:GO Player</div>
-  <h1>Juuann</h1>
+  <div class="sub">CS:GO PLAYER</div>
+  <h1 class="glitch" data-t="Juuann">Juuann</h1>
   <div class="chips">
     <div class="chip">25K Premier Peak</div>
     <div class="chip">8000+ Hours</div>
     <div class="chip">Since 2018</div>
   </div>
 </section>
+</div>
 
-<section class="section" id="configuracion">
-  <div class="sec-head"><h2>Configuración</h2><div class="rule"></div><span class="count">4</span></div>
+<div class="ticker"><div id="tk"></div></div>
+
+<div class="wrap">
+<section class="section reveal" id="configuracion">
+  <div class="sec-head"><h2>Configuración</h2><div class="rule"></div><span class="count">3</span></div>
   <div class="grid">
-    <div class="panel copyable">
-      <div class="label">Resolution</div>
-      <div class="value">800x600</div>
-      <button class="btn" onclick="c('800x600', this)">Copiar</button>
-    </div>
-    <div class="panel copyable">
-      <div class="label">DPI</div>
-      <div class="value">800</div>
-      <button class="btn" onclick="c('800', this)">Copiar</button>
-    </div>
-    <div class="panel copyable">
-      <div class="label">Sensitivity</div>
-      <div class="value">1.55</div>
-      <button class="btn" onclick="c('1.55', this)">Copiar</button>
-    </div>
-    <div class="panel copyable">
-      <div class="label">Crosshair</div>
-      <div class="xh-code">CSGO-ue57B-RNCCw-8URMu-dHkb6-5pZQM</div>
-      <button class="btn" onclick="c('CSGO-ue57B-RNCCw-8URMu-dHkb6-5pZQM', this)">Copiar</button>
-    </div>
+    <div class="panel copyable"><div class="label">Resolution</div><div class="value">800x768</div><button class="btn" onclick="c('800x768',this)">Copiar</button></div>
+    <div class="panel copyable"><div class="label">DPI</div><div class="value">800</div><button class="btn" onclick="c('800',this)">Copiar</button></div>
+    <div class="panel copyable"><div class="label">Sensitivity</div><div class="value">1.55</div><button class="btn" onclick="c('1.55',this)">Copiar</button></div>
   </div>
 </section>
 
-<section class="section" id="hardware">
+<section class="section reveal" id="hardware">
   <div class="sec-head"><h2>Hardware</h2><div class="rule"></div><span class="count">4</span></div>
   <div class="grid">
-    <div class="panel static"><div class="label">CPU</div><div class="value">i3-7100</div></div>
-    <div class="panel static"><div class="label">GPU</div><div class="value">GT 1030 GDDR5</div></div>
-    <div class="panel static"><div class="label">RAM</div><div class="value">16 GB</div></div>
-    <div class="panel static"><div class="label">SSD</div><div class="value">Kingston 1TB</div></div>
+    <div class="panel"><div class="label">CPU</div><div class="value">i3-7100</div></div>
+    <div class="panel"><div class="label">GPU</div><div class="value">RX 460 Sapphire</div></div>
+    <div class="panel"><div class="label">RAM</div><div class="value">16 GB</div></div>
+    <div class="panel"><div class="label">SSD</div><div class="value">Kingston 1TB</div></div>
   </div>
 </section>
 
-<section class="section" id="setup">
-  <div class="sec-head"><h2>Setup</h2><div class="rule"></div><span class="count">3</span></div>
+<section class="section reveal" id="setup">
+  <div class="sec-head"><h2>Setup</h2><div class="rule"></div><span class="count">4</span></div>
   <div class="grid">
-    <div class="panel static"><div class="label">Mouse</div><div class="value">Redragon King Pro</div></div>
-    <div class="panel static"><div class="label">Keyboard</div><div class="value">T-Dagger Arena</div></div>
-    <div class="panel static"><div class="label">Monitor</div><div class="value">VX2428A</div><div class="xh-code" style="margin-top:6px;color:var(--text-dim)">180Hz IPS</div></div>
+    <div class="panel"><div class="label">Mouse</div><div class="value">Ajazz AJ159</div></div>
+    <div class="panel"><div class="label">Keyboard</div><div class="value">Aula Win 60HE</div></div>
+    <div class="panel"><div class="label">Headset</div><div class="value">Attack Shark L80 Pro</div></div>
+    <div class="panel"><div class="label">Monitor</div><div class="value">VX2428A</div><div class="sm">180Hz IPS</div></div>
   </div>
 </section>
 
-<section class="section" id="steam">
+<section class="section reveal" id="steam">
   <div class="sec-head"><h2>Cuentas de Steam</h2><div class="rule"></div><span class="count">2</span></div>
   <div class="steam-grid">
-    <a class="steam-card" href="https://steamcommunity.com/id/facu1234567/" target="_blank" rel="noopener">
-      <div class="label">Main Account</div>
-      <div class="handle"><span>facu1234567</span><span class="chev">›</span></div>
-    </a>
-    <a class="steam-card" href="https://steamcommunity.com/profiles/76561199816492394/" target="_blank" rel="noopener">
-      <div class="label">Secondary Account</div>
-      <div class="handle"><span>76561199816492394</span><span class="chev">›</span></div>
-    </a>
+    <a href="https://steamcommunity.com/id/facu1234567/" target="_blank" rel="noopener"><div class="panel"><div class="label">Main Account</div><div class="handle"><span>facu1234567</span><span class="chev">›</span></div></div></a>
+    <a href="https://steamcommunity.com/profiles/76561199816492394/" target="_blank" rel="noopener"><div class="panel"><div class="label">Secondary Account</div><div class="handle"><span>76561199816492394</span><span class="chev">›</span></div></div></a>
   </div>
 </section>
 
-<section class="section" id="autoexec">
+<section class="section reveal" id="autoexec">
   <div class="sec-head"><h2>Autoexec.cfg</h2><div class="rule"></div></div>
   <div class="terminal">
-    <div class="terminal-bar">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="fname">autoexec.cfg</div>
-      <button class="btn" onclick="d()">Descargar .cfg</button>
-    </div>
+    <div class="terminal-bar"><div class="dots"><span></span><span></span><span></span></div><div class="fname">autoexec.cfg</div><button class="btn" onclick="d()">Descargar .cfg</button></div>
     <pre id="cfgText">// ====================================================================
 // CONFIGURACIÓN MAESTRA OPTIMIZADA v2 - CS:GO LEGACY 2023
-// Diseñada para: Intel i3-7100 (2C/4T) + NVIDIA GT 1030 + 16GB RAM
+// Diseñada para: Intel i3-7100 (2C/4T) + AMD RX 460 + 16GB RAM
 // ENFOQUE: MÁXIMOS FPS POSIBLES, ESTABILIDAD EXTREMA Y CERO LAG (SIN GRABAR)
 // ====================================================================
 
@@ -299,7 +222,7 @@ snd_mix_async "1"            // Procesa el sonido de forma asíncrona para elimi
 snd_stream "1"               // Carga el audio dinámicamente desde el disco. Libera RAM y CPU.
 
 // -------------------------------------------------------------
-// 3. RENDIMIENTO GRÁFICO ULTRA-AGRESIVO (NVIDIA GT 1030)
+// 3. RENDIMIENTO GRÁFICO ULTRA-AGRESIVO (AMD RX 460)
 // -------------------------------------------------------------
 r_dynamic "0"                // Desactiva la iluminación dinámica (como fogonazos de granadas o disparos), evitando caídas brutales de FPS.
 muzzleflash_light "0"        // Desactiva el reflejo de luz de los disparos en las paredes.
@@ -309,7 +232,7 @@ r_drawflecks "0"             // Desactiva el impacto de chispas y partículas f�
 func_break_max_pieces "0"    // Elimina escombros molestos (vidrios, madera rota). Menos físicas = FPS más consistentes.
 props_break_max_pieces "0"   // Elimina la fragmentación de objetos decorativos destruibles.
 cl_disable_ragdolls "1"      // Desactiva físicas pesadas en los cuerpos al morir. Estabiliza el frametime en bajas múltiples.
-mat_disable_bloom "1"        // Desactiva el efecto bloom (brillo excesivo). Mayor rendimiento para tu GT 1030.
+mat_disable_bloom "1"        // Desactiva el efecto bloom (brillo excesivo). Mayor rendimiento para tu RX 460.
 mat_hdr_level "0"            // Desactiva el alto rango dinámico (HDR), ganando un gran margen de FPS.
 mat_reducefillrate "1"       // Reduce la tasa de relleno de renderizado. Enorme impulso en gráficas de gama baja.
 r_cheapwaterstart "1"        // Comienza la simplificación visual del agua a muy corta distancia.
@@ -400,53 +323,94 @@ echo "  TU CONFIGURACIÓN PERSONAL HA SIDO RESPETADA AL 100%    "
 echo "========================================================="</pre>
   </div>
 </section>
-
 </div>
 
 <footer>Juuann · CSGO Player</footer>
 
+<button class="btn" id="cc" onclick="cc(this)" style="position:fixed;right:18px;bottom:18px;z-index:800;margin:0;background:#000c;backdrop-filter:blur(8px)">&lt;/&gt; Copiar código</button>
+
+<div id="pl" class="paused">
+  <div class="eq"><i></i><i></i><i></i><i></i></div>
+  <span>GPU RX460 SHAPPIRE</span>
+  <button id="pp" title="Play/Pausa">▶</button>
+  <input id="vol" type="range" min="0" max="100" value="60">
+</div>
+
 <script>
-function c(t, btn){
-  navigator.clipboard.writeText(t);
-  const panel = btn.closest('.panel');
-  if(panel){
-    panel.classList.add('flash');
-    setTimeout(()=>panel.classList.remove('flash'), 550);
+/* ===== CONFIG MÚSICA ===== */
+const YT_ID='xj0GM9j-_po';   // video de YouTube
+const MP3='Flashing Lights.mp3'; // archivo junto al index.html
+
+/* ===== helpers ===== */
+function c(t,btn){navigator.clipboard.writeText(t);const p=btn.closest('.panel');p.classList.add('flash');setTimeout(()=>p.classList.remove('flash'),500);const o=btn.textContent;btn.textContent='Copiado ✓';btn.classList.add('copied');setTimeout(()=>{btn.textContent=o;btn.classList.remove('copied')},1200)}
+function d(){const b=new Blob([document.getElementById('cfgText').innerText],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='autoexec-optimizado-v2.cfg';a.click()}
+(function(){const el=document.getElementById('cfgText');el.innerHTML=el.textContent.split('\n').map(l=>{let e=l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');const t=e.trim();if(/^\/\/\s*-{5,}/.test(t))return'<span class="cf-rule">'+e+'</span>';if(/^\/\/\s*\d+\./.test(t))return'<span class="cf-head">'+e+'</span>';const i=e.indexOf('//');let k=i>=0?e.slice(0,i):e,m=i>=0?e.slice(i):'';k=k.replace(/"([^"]*)"/g,'<span class="cf-val">"$1"</span>');return k+(m?'<span class="cf-cm">'+m+'</span>':'')}).join('\n')})();
+
+/* ticker */
+const words=['CS:GO LEGACY','25K PREMIER PEAK','8000+ HOURS','AIM · CLUTCH · REPEAT','RX 460','800x768'];
+document.getElementById('tk').innerHTML=(words.map(w=>'<span>'+w+'</span>').join('')).repeat(2);
+
+/* cards: wrap, tilt, spotlight */
+document.querySelectorAll('.panel').forEach(p=>{
+  const i=document.createElement('div');i.className='in';while(p.firstChild)i.appendChild(p.firstChild);p.appendChild(i);
+  p.addEventListener('mousemove',e=>{const r=p.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+    p.style.setProperty('--mx',x+'px');p.style.setProperty('--my',y+'px');
+    p.style.transform=`rotateX(${((y/r.height)-.5)*-14}deg) rotateY(${((x/r.width)-.5)*14}deg) scale(1.04)`});
+  p.addEventListener('mouseleave',()=>p.style.transform='');
+});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(s=>io.observe(s));
+
+/* cursor */
+const cu=document.querySelector('.cur'),cu2=document.querySelector('.cur2');let M={x:-999,y:-999},cx=0,cy=0;
+addEventListener('mousemove',e=>{M.x=e.clientX;M.y=e.clientY;cu.style.transform=`translate(${M.x}px,${M.y}px)`});
+document.querySelectorAll('a,button,.panel,.chip').forEach(n=>{n.addEventListener('mouseenter',()=>cu2.classList.add('h'));n.addEventListener('mouseleave',()=>cu2.classList.remove('h'))});
+
+/* fondo: red de partículas reactiva al mouse */
+const cv=document.getElementById('bg'),g=cv.getContext('2d');let W,H,P=[];
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=Array.from({length:Math.min(130,W*H/11000|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.6,r:Math.random()*1.8+.6}))}
+rs();addEventListener('resize',rs);
+let click=0;addEventListener('click',()=>click=1);
+function loop(){
+  g.fillStyle='rgba(5,5,7,.28)';g.fillRect(0,0,W,H);
+  cx+=(M.x-cx)*.18;cy+=(M.y-cy)*.18;cu2.style.transform=`translate(${cx}px,${cy}px)`;
+  for(const p of P){
+    const dx=p.x-M.x,dy=p.y-M.y,ds=Math.hypot(dx,dy);
+    if(ds<170){const f=(1-ds/170)*(click?9:1.6);p.vx+=dx/ds*f*.25;p.vy+=dy/ds*f*.25}
+    p.vx*=.985;p.vy*=.985;p.x+=p.vx+(Math.random()-.5)*.1;p.y+=p.vy+(Math.random()-.5)*.1;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    g.beginPath();g.arc(p.x,p.y,p.r,0,7);g.fillStyle=ds<170?'#a78bfa':'#fff';g.fill();
   }
-  const original = btn.textContent;
-  btn.textContent = 'Copiado ✓';
-  btn.classList.add('copied');
-  setTimeout(()=>{
-    btn.textContent = original;
-    btn.classList.remove('copied');
-  }, 1200);
+  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<115){g.strokeStyle=`rgba(255,255,255,${(1-d/115)*.22})`;g.lineWidth=.6;g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke()}}
+  for(const p of P){const d=Math.hypot(p.x-M.x,p.y-M.y);if(d<200){g.strokeStyle=`rgba(124,58,237,${(1-d/200)*.8})`;g.lineWidth=1;g.beginPath();g.moveTo(p.x,p.y);g.lineTo(M.x,M.y);g.stroke()}}
+  click=0;requestAnimationFrame(loop)}
+loop();
+
+/* copiar código fuente */
+async function cc(b){
+  const o=b.innerHTML;
+  try{
+    const r=await fetch(location.href.split('#')[0],{cache:'no-store'});
+    if(!r.ok)throw 0;
+    await navigator.clipboard.writeText(await r.text());
+    b.textContent='Código copiado ✓';b.classList.add('copied');
+  }catch(e){b.textContent='Subila a un servidor';}
+  setTimeout(()=>{b.innerHTML=o;b.classList.remove('copied')},1800);
 }
 
-function d(){
-  const b = new Blob([document.getElementById('cfgText').innerText], {type:'text/plain'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(b);
-  a.download = 'autoexec-optimizado-v2.cfg';
-  a.click();
-}
-
-(function highlightCfg(){
-  const el = document.getElementById('cfgText');
-  const lines = el.textContent.split('\n');
-  const html = lines.map(line=>{
-    let esc = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const trimmed = esc.trim();
-    if(/^\/\/\s*-{5,}/.test(trimmed)) return '<span class="cf-rule">'+esc+'</span>';
-    if(/^\/\/\s*\d+\./.test(trimmed)) return '<span class="cf-head">'+esc+'</span>';
-    const idx = esc.indexOf('//');
-    let code = idx >= 0 ? esc.slice(0, idx) : esc;
-    let cmt = idx >= 0 ? esc.slice(idx) : '';
-    code = code.replace(/"([^"]*)"/g, '<span class="cf-val">"$1"</span>');
-    return code + (cmt ? '<span class="cf-cm">'+cmt+'</span>' : '');
-  }).join('\n');
-  el.innerHTML = html;
-})();
+/* música */
+const pl=document.getElementById('pl'),pp=document.getElementById('pp'),vol=document.getElementById('vol');let yt,au,on=false;
+function ui(){pl.classList.toggle('paused',!on);pp.textContent=on?'❚❚':'▶'}
+function setVol(){const v=+vol.value;if(au)au.volume=v/100;if(yt&&yt.setVolume)yt.setVolume(v)}
+function play(){on=true;au?au.play():yt&&yt.playVideo&&yt.playVideo();ui()}
+function pause(){on=false;au?au.pause():yt&&yt.pauseVideo&&yt.pauseVideo();ui()}
+pp.onclick=()=>on?pause():play();vol.oninput=setVol;
+function startMusic(){
+  if(MP3){au=new Audio(MP3);au.loop=true;setVol();play();return}
+  window.onYouTubeIframeAPIReady=()=>{yt=new YT.Player('yt',{videoId:YT_ID,playerVars:{autoplay:1,loop:1,playlist:YT_ID,controls:0},events:{onReady:e=>{e.target.setVolume(+vol.value);e.target.playVideo();on=true;ui()},onStateChange:e=>{if(e.data===1){on=true;ui()}if(e.data===2){on=false;ui()}}}})};
+  const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
+document.getElementById('enter').addEventListener('click',function(){this.classList.add('out');startMusic();setTimeout(()=>this.remove(),900)});
 </script>
-
 </body>
 </html>
